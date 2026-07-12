@@ -1,0 +1,6 @@
+* text=auto eol=lf
+*.sol text diff
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
