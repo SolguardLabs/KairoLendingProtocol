@@ -639,32 +639,6 @@ contract KairoLendingPool is ProtocolAccess, ReentrancyLock, IKairoPoolView, ITr
         return MarketMath.availableLiquidity(cash, state.totalReserves);
     }
 
-    function exchangeRate(
-        address asset
-    ) external view returns (uint256) {
-        _requireListed(asset);
-        DataTypes.MarketConfig storage config = _marketConfigs[asset];
-        DataTypes.MarketState memory state = _previewMarketState(asset);
-        return MarketMath.exchangeRate(
-            state.totalSupplyAssets, IERC20(config.supplyToken).totalSupply()
-        );
-    }
-
-    function previewRates(
-        address asset
-    ) external view returns (uint256 borrowRateRay, uint256 supplyRateRay) {
-        _requireListed(asset);
-        DataTypes.MarketConfig storage config = _marketConfigs[asset];
-        DataTypes.MarketState memory state = _previewMarketState(asset);
-        uint256 cash = IERC20(asset).balanceOf(address(this));
-        borrowRateRay = IRateModel(config.rateModel)
-            .getBorrowRate(cash, state.totalBorrowAssets, state.totalReserves);
-        supplyRateRay = IRateModel(config.rateModel)
-            .getSupplyRate(
-                cash, state.totalBorrowAssets, state.totalReserves, config.reserveFactorBps
-            );
-    }
-
     // -------------------------------------------------------------------------
     // Internal accounting
     // -------------------------------------------------------------------------

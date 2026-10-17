@@ -40,6 +40,18 @@ El equipo intentará seguir estos plazos, sin que constituyan una garantía cont
 
 La prioridad considera fondos en riesgo, permisos necesarios, reproducibilidad, alcance entre mercados y disponibilidad de medidas operativas.
 
+```mermaid
+flowchart LR
+    A[Recepción privada] --> B[Triage y reproducción]
+    B --> C[Contención operativa]
+    C --> D[Corrección y pruebas]
+    D --> E[Revisión independiente]
+    E --> F[Despliegue coordinado]
+    F --> G[Comunicación acordada]
+```
+
+La contención y la corrección son estados distintos. Una pausa, reducción de límites o rotación de roles puede disminuir exposición, pero no cierra el análisis técnico.
+
 ## Alcance
 
 Se consideran dentro del alcance:
@@ -88,3 +100,7 @@ Las direcciones oficiales, versiones y parámetros deben verificarse mediante lo
 La fecha y el contenido de una comunicación pública se acordarán después de disponer de una corrección o de medidas razonables para proteger a los usuarios. El reconocimiento se realizará cuando la persona informante lo solicite y sea apropiado.
 
 Gracias por contribuir a la seguridad de Kairo.
+
+## Controles de entrega
+
+Toda versión mantenida debe conservar compilación reproducible, suite completa, margen positivo de runtime frente a EIP-170, revisión del contenido público y correspondencia entre `main`, `production`, etiqueta y activo publicado. Estos controles reducen errores de distribución; no sustituyen una revisión de seguridad.

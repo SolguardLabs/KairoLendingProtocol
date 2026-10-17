@@ -2,7 +2,7 @@ name: Continuous Integration
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "production", "release/**"]
   pull_request:
   workflow_dispatch:
 

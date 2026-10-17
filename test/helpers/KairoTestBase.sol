@@ -7,6 +7,7 @@ import { KairoLendingPool } from "../../src/KairoLendingPool.sol";
 import { TwoSlopeRateModel } from "../../src/interest/TwoSlopeRateModel.sol";
 import { IERC20 } from "../../src/interfaces/IERC20.sol";
 import { IKairoPoolView } from "../../src/interfaces/IKairoPoolView.sol";
+import { KairoProtocolLens } from "../../src/lens/KairoProtocolLens.sol";
 import { DataTypes } from "../../src/libraries/DataTypes.sol";
 import { KairoOracleRouter } from "../../src/oracle/KairoOracleRouter.sol";
 import { KairoRiskEngine } from "../../src/risk/KairoRiskEngine.sol";
@@ -46,6 +47,7 @@ abstract contract KairoTestBase is Test {
 
     TwoSlopeRateModel internal rateModel;
     KairoLendingPool internal pool;
+    KairoProtocolLens internal lens;
     KairoRiskEngine internal riskEngine;
 
     IERC20 internal kWeth;
@@ -74,6 +76,7 @@ abstract contract KairoTestBase is Test {
         pool = new KairoLendingPool(admin, treasury);
         riskEngine = new KairoRiskEngine(IKairoPoolView(address(pool)));
         pool.setRiskEngine(address(riskEngine));
+        lens = new KairoProtocolLens(IKairoPoolView(address(pool)));
 
         pool.listMarket(
             address(weth),

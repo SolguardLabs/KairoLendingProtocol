@@ -6,6 +6,37 @@ Kairo es un mercado de crédito multiactivo para EVM. El protocolo permite aport
 
 El repositorio contiene los contratos, interfaces, bibliotecas, utilidades de consulta, scripts de despliegue y pruebas necesarias para ejecutar Kairo de forma local con Foundry.
 
+> Estado de la línea 1.0: contratos compilados con Solidity 0.8.24, configuración reproducible y validación automática de formato, pruebas, bytecode y contenido público.
+
+## Documentación
+
+| Área | Referencia |
+| --- | --- |
+| Diseño del sistema | [Arquitectura y fronteras de confianza](./docs/arquitectura.md) |
+| Contabilidad | [Modelo económico](./docs/modelo-economico.md) |
+| Solvencia | [Modelo de riesgo y estrés](./docs/modelo-riesgo.md) |
+| Precios | [Oráculos y liquidaciones](./docs/oraculos-liquidaciones.md) |
+| Aplicaciones | [Guía de integración](./docs/integracion.md) |
+| Explotación del servicio | [Operación y respuesta](./docs/operacion.md) |
+| Cambios | [Gobernanza](./docs/gobernanza.md) |
+
+## Arquitectura
+
+```mermaid
+flowchart LR
+    A[Aplicaciones] --> L[KairoProtocolLens]
+    U[Proveedores y prestatarios] --> P[KairoLendingPool]
+    L --> P
+    P --> R[KairoRiskEngine]
+    R --> O[KairoOracleRouter]
+    P --> I[TwoSlopeRateModel]
+    P --> S[KairoSupplyToken]
+    C[KairoConfigurator] --> P
+    P --> T[KairoTreasury]
+    X[KairoStressEngine] -. análisis sin estado .-> A
+    Y[KairoRiskPolicy] -. clasificación .-> C
+```
+
 ## Características
 
 - Mercados independientes por activo de reserva.
@@ -65,6 +96,8 @@ src/
 ├── tokens/                 Participaciones de suministro
 └── treasury/               Distribución de reservas del protocolo
 ```
+
+`KairoRiskPolicy` clasifica propuestas de parámetros antes de ejecutarlas. `KairoStressEngine` calcula pérdida, absorción de reservas, cobertura y concentración a partir de instantáneas explícitas; ambos son componentes puros y no reciben custodia ni permisos sobre el pool.
 
 La distribución exacta puede evolucionar; las interfaces públicas y los eventos son la referencia para las integraciones.
 
@@ -159,6 +192,9 @@ Las pruebas cubren, entre otros, los siguientes comportamientos:
 - acumulación de reservas;
 - permisos y pausas operativas;
 - consultas agregadas de Kairo Lens.
+- clasificación de cambios de parámetros;
+- escenarios de crédito, liquidez y absorción de reservas;
+- margen de bytecode respecto del límite EIP-170.
 
 Para generar un informe de cobertura:
 
@@ -232,6 +268,8 @@ Antes de enviar cambios:
 forge fmt --check
 forge build
 forge test
+bash scripts/check-sizes.sh
+bash scripts/verify-public.sh
 bash scripts/check-loc.sh
 ```
 
