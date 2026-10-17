@@ -6,9 +6,11 @@ import { console2 } from "forge-std/console2.sol";
 
 import { KairoLendingPool } from "../src/KairoLendingPool.sol";
 import { KairoConfigurator } from "../src/governance/KairoConfigurator.sol";
+import { KairoRiskPolicy } from "../src/governance/KairoRiskPolicy.sol";
 import { IKairoPoolView } from "../src/interfaces/IKairoPoolView.sol";
 import { KairoProtocolLens } from "../src/lens/KairoProtocolLens.sol";
 import { KairoRiskEngine } from "../src/risk/KairoRiskEngine.sol";
+import { KairoStressEngine } from "../src/risk/KairoStressEngine.sol";
 import { KairoTreasury } from "../src/treasury/KairoTreasury.sol";
 
 /// @notice Deploys the Kairo core and wires operational roles.
@@ -18,6 +20,8 @@ contract DeployKairo is Script {
         KairoRiskEngine riskEngine;
         KairoProtocolLens lens;
         KairoConfigurator configurator;
+        KairoRiskPolicy riskPolicy;
+        KairoStressEngine stressEngine;
         KairoTreasury treasury;
     }
 
@@ -33,6 +37,8 @@ contract DeployKairo is Script {
         deployed.riskEngine = new KairoRiskEngine(IKairoPoolView(address(deployed.pool)));
         deployed.lens = new KairoProtocolLens(IKairoPoolView(address(deployed.pool)));
         deployed.configurator = new KairoConfigurator(deployer, deployed.pool);
+        deployed.riskPolicy = new KairoRiskPolicy();
+        deployed.stressEngine = new KairoStressEngine();
         deployed.treasury = new KairoTreasury(deployer, deployed.pool, reserveRecipient);
 
         deployed.pool.setRiskEngine(address(deployed.riskEngine));
@@ -52,6 +58,8 @@ contract DeployKairo is Script {
         console2.log("KairoRiskEngine", address(deployed.riskEngine));
         console2.log("KairoProtocolLens", address(deployed.lens));
         console2.log("KairoConfigurator", address(deployed.configurator));
+        console2.log("KairoRiskPolicy", address(deployed.riskPolicy));
+        console2.log("KairoStressEngine", address(deployed.stressEngine));
         console2.log("KairoTreasury", address(deployed.treasury));
         if (finalAdmin != deployer) {
             console2.log("Pending administrator", finalAdmin);

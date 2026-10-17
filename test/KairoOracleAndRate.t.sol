@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
+import { KairoProtocolLens } from "../src/lens/KairoProtocolLens.sol";
 import { KairoOracleRouter } from "../src/oracle/KairoOracleRouter.sol";
 import { KairoTestBase } from "./helpers/KairoTestBase.sol";
 import { MockPriceFeed } from "./mocks/MockPriceFeed.sol";
@@ -63,13 +64,13 @@ contract KairoOracleAndRateTest is KairoTestBase {
     }
 
     function testMarketRatesIncreaseAfterBorrowing() public {
-        (uint256 borrowRateBefore, uint256 supplyRateBefore) = pool.previewRates(address(usdc));
+        KairoProtocolLens.RateView memory beforeRates = lens.previewRates(address(usdc));
         _openPosition(100 ether, 100_000 * USDC_UNIT);
-        (uint256 borrowRateAfter, uint256 supplyRateAfter) = pool.previewRates(address(usdc));
+        KairoProtocolLens.RateView memory afterRates = lens.previewRates(address(usdc));
 
-        assertEq(borrowRateBefore, BASE_RATE);
-        assertEq(supplyRateBefore, 0);
-        assertGt(borrowRateAfter, borrowRateBefore);
-        assertGt(supplyRateAfter, supplyRateBefore);
+        assertEq(beforeRates.borrowRatePerSecondRay, BASE_RATE);
+        assertEq(beforeRates.supplyRatePerSecondRay, 0);
+        assertGt(afterRates.borrowRatePerSecondRay, beforeRates.borrowRatePerSecondRay);
+        assertGt(afterRates.supplyRatePerSecondRay, beforeRates.supplyRatePerSecondRay);
     }
 }
